@@ -30,6 +30,34 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function location()
+    {
+        return $this->belongsTo(Location::class);
+    }
+
+    // المستخدم صاحب هبات
+    public function hubs()
+    {
+        return $this->hasMany(Hub::class, 'owner_id');
+    }
+
+    // حجوزاته
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+    // تقييماته
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -67,4 +95,3 @@ class User extends Authenticatable implements JWTSubject
         ];
     }
 }
-
