@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
+use App\Enum\LocationType;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Location extends Model
 {
     //
-
+    use HasFactory;
+    protected $fillable = [
+        'name',
+        'parent_id',
+        'type',
+    ];
+    protected $casts = [
+        'type' => LocationType::class,
+    ];
 
 
     public function parent()
@@ -17,7 +27,8 @@ class Location extends Model
 
     public function children()
     {
-        return $this->hasMany(Location::class, 'parent_id');
+        return $this->hasMany(Location::class, 'parent_id')
+        ->with('children');
     }
 
     public function hubs()
@@ -28,5 +39,10 @@ class Location extends Model
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 }

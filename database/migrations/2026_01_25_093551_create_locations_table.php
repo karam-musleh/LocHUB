@@ -19,8 +19,8 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('locations')
                 ->onDelete('cascade');
-            // level can be country, state, city, etc.
-            $table->string('level');
+            // type can be governorate, city, area
+            $table->string('type');
             $table->timestamps();
         });
     }
