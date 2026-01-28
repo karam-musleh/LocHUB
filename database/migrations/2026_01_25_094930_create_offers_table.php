@@ -17,7 +17,7 @@ return new class extends Migration
               ->constrained('hubs')
               ->cascadeOnDelete();
 
-        $table->string('title');
+        $table->json('title');
         $table->string('type', 20)->default('daily');
 
         $table->bigInteger('price');
@@ -25,7 +25,7 @@ return new class extends Migration
         $table->integer('duration');
         // بالساعات (daily) أو الأيام (weekly / monthly)
 
-        $table->text('description')->nullable();
+        $table->json('description')->nullable();
 
         $table->string('status')->default('pending');
             $table->timestamps();

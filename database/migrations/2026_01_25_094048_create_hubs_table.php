@@ -17,12 +17,12 @@ return new class extends Migration
             $table->foreignId('owner_id')
                 ->constrained('users')
                 ->cascadeOnDelete();
-            $table->string('name');
+            $table->json('name');
             $table->foreignId('location_id')
                 ->constrained('locations')
                 ->onDelete('cascade');
-            $table->text('description')->nullable();
-            $table->string('address_details');
+            $table->json('description')->nullable();
+            $table->json('address_details');
             $table->string('status')->default('pending');
 
 

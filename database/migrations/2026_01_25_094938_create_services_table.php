@@ -16,8 +16,8 @@ return new class extends Migration
             $table->foreignId('hub_id')
                 ->constrained('hubs')
                 ->cascadeOnDelete();
-            $table->string('name');
-            $table->text('description')->nullable();
+            $table->json('name');
+            $table->json('description')->nullable();
             $table->timestamps();
         });
     }
