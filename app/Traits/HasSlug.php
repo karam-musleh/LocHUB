@@ -28,6 +28,11 @@ trait HasSlug
 
     public function generateSlug($value)
     {
+        // لو القيمة Array (Translatable)
+        if (is_array($value)) {
+            $value = $value['en'] ?? reset($value);
+        }
+
         $baseSlug = Str::slug($value);
         $slug = $baseSlug;
         $count = 1;
@@ -42,6 +47,7 @@ trait HasSlug
 
         return $slug;
     }
+
     public function getRouteKeyName(): string
     {
         return 'slug';

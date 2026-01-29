@@ -21,10 +21,23 @@ class LocationRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'name'      => 'required|string|max:255',
-            'parent_id' => 'nullable|exists:locations,id',
-            'type'      => 'required|string|in:governorate,city,area',
-        ];
+
+        if ($this->isMethod('PUT') || $this->isMethod('PATCH')) {
+            return [
+                'name'      => 'sometimes|array',
+                'name.ar'   => 'sometimes|string|max:255',
+                'name.en'   => 'sometimes|string|max:255',
+                'parent_id' => 'nullable|exists:locations,id',
+                'type'      => 'sometimes|string|in:governorate,city,area',
+            ];
+        } else {
+            return [
+                'name'      => 'required|array',
+                'name.ar'   => 'required|string|max:255',
+                'name.en'   => 'required|string|max:255',
+                'parent_id' => 'nullable|exists:locations,id',
+                'type'      => 'required|string|in:governorate,city,area',
+            ];
+        }
     }
 }

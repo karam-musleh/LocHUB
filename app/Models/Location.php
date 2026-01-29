@@ -2,14 +2,18 @@
 
 namespace App\Models;
 
+use App\Traits\HasSlug;
 use App\Enum\LocationType;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Location extends Model
 {
     //
     use HasFactory;
+    use HasSlug;
+    use HasTranslations;
     protected $fillable = [
         'name',
         'parent_id',
@@ -18,7 +22,7 @@ class Location extends Model
     protected $casts = [
         'type' => LocationType::class,
     ];
-
+    public $translatable = ['name'];
 
     public function parent()
     {
@@ -28,7 +32,7 @@ class Location extends Model
     public function children()
     {
         return $this->hasMany(Location::class, 'parent_id')
-        ->with('children');
+            ->with('children');
     }
 
     public function hubs()

@@ -2,10 +2,29 @@
 
 namespace App\Models;
 
+use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 class Hub extends Model
 {
+
+    use HasSlug, HasTranslations;
+
+    protected $fillable = [
+        'name',
+        'slug',
+        'owner_id',
+        'location_id',
+        'description',
+        'address_details',
+        'status',
+    ];
+    protected $translatable = [
+        'name',
+        'description',
+        'address_details'
+    ];
     //
     public function owner()
     {
