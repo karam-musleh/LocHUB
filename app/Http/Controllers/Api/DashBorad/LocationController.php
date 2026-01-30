@@ -4,17 +4,23 @@ namespace App\Http\Controllers\Api\DashBorad;
 
 use App\Models\Location;
 use Illuminate\Http\Request;
-use App\Traits\ApiResponserTrait;
+// use App\Traits\ApiResponserTrait;
+use App\Traits\ApiResponseTrait;
+
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LocationRequest;
 use App\Http\Resources\LocationResource;
 
 class LocationController extends Controller
 {
-    use ApiResponserTrait;
+    use ApiResponseTrait;
+
+    // use ApiResponserTrait;
     //index
     public function index(Request $request)
     {
+        // dd(class_exists(\App\Traits\ApiResponseTrait::class));
+
         $request->validate([
             'type' => 'nullable|in:governorate,city,area',
             'parent_id' => 'nullable|exists:locations,id'
@@ -30,10 +36,8 @@ class LocationController extends Controller
         // تحديد الأب
         if ($request->filled('parent_id')) {
             $query->where('parent_id', $request->parent_id);
-        } else {
-            // لو ما في parent_id نجيب الجذر (المحافظات)
-            $query->whereNull('parent_id');
         }
+
 
         $locations = $query->orderBy('id')->get();
 
@@ -69,5 +73,14 @@ class LocationController extends Controller
         }
         $location->update($request->validated());
         return $this->successResponse(new LocationResource($location), 'Location updated successfully');
+    }
+    public function destroy($slug)
+    {
+        $location = Location::where('slug', $slug)->first();
+        if (!$location) {
+            return $this->errorResponse('Location not found', 404);
+        }
+        $location->delete();
+        return $this->successResponse(null, 'Location deleted successfully');
     }
 }

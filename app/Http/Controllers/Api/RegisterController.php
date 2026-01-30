@@ -9,7 +9,7 @@ use App\Traits\ApiResponserTrait;
 
 class RegisterController extends Controller
 {
-    use ApiResponserTrait;
+    // use ApiResponserTrait;
     //
-    
+
 }

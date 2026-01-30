@@ -1,11 +1,10 @@
 <?php
 
 namespace App\Traits;
-
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-trait ApiResponserTrait
+trait ApiResponseTrait
 {
     /**
      * Return a successful JSON response
