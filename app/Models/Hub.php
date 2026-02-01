@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enum\HubStatus;
 use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
@@ -24,6 +25,9 @@ class Hub extends Model
         'name',
         'description',
         'address_details'
+    ];
+    protected $casts = [
+        'status' => HubStatus::class
     ];
     //
     public function owner()

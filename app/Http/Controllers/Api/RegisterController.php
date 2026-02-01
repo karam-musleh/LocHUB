@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
-use App\Enum\UserRole;
-use App\Enum\UserStatus;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -23,11 +21,6 @@ class RegisterController extends Controller
     //
     public function register(RegisterRequest $request)
     {
-        if (in_array($request->role, [UserRole::HUB_OWNER->value])) {
-            $status = UserStatus::PENDING->value;
-        } else {
-            $status = UserStatus::ACTIVE->value;
-        }
         $user = User::create([
             'name'       => $request->name,
             'email'      => $request->email,
@@ -36,7 +29,6 @@ class RegisterController extends Controller
             'role'       => $request->role,
             'location_id' => $request->location_id,
             'specialization' => $request->specialization,
-            'status'     => $status,
         ]);
         $token = Auth::guard('api')->login($user);
         return $this->successResponse(['user' => new UserResource($user), 'token' => $token], 'User registered successfully', 201);
@@ -45,18 +37,11 @@ class RegisterController extends Controller
     public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->first();
-
         if (!$user) {
             return $this->errorResponse('User not found', 401);
         }
         if (!Hash::check($request->password, $user->password)) {
             return $this->errorResponse('Invalid password', 400);
-        }
-        if ($user->role === UserRole::HUB_OWNER->value && $user->status !== UserStatus::APPROVED->value) {
-            return $this->errorResponse('Hub owner is not approved yet', 403);
-        }
-        if ($user->status !== UserStatus::ACTIVE->value) {
-            return $this->errorResponse('User status is not active', 403);
         }
 
         $token = Auth::guard('api')->login($user);
