@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enum\UserRole;
+use App\Enum\UserStatus;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -75,7 +76,7 @@ class User extends Authenticatable implements JWTSubject
         'role',
         'specialization',
         'location_id',
-        
+
     ];
 
     /**
@@ -99,6 +100,7 @@ class User extends Authenticatable implements JWTSubject
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'status' => UserStatus::class,
         ];
     }
 }

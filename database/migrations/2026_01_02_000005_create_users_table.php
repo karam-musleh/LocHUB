@@ -20,10 +20,12 @@ return new class extends Migration
             $table->string('specialization')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('status')->default('active');
             $table->foreignId('location_id')
                 ->nullable()
                 ->constrained('locations')
                 ->nullOnDelete();
+
             $table->rememberToken();
             $table->timestamps();
         });
