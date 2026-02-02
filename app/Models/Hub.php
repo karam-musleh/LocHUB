@@ -5,7 +5,9 @@ namespace App\Models;
 use App\Enum\HubStatus;
 use App\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Hub extends Model
 {
@@ -20,6 +22,7 @@ class Hub extends Model
         'description',
         'address_details',
         'status',
+        // 'images',
     ];
     protected $translatable = [
         'name',
@@ -69,5 +72,43 @@ class Hub extends Model
     public function images()
     {
         return $this->morphMany(Image::class, 'imageable');
+    }
+    public function mainImage()
+    {
+        return $this->morphOne(Image::class, 'imageable')->where('type', 'main');
+    }
+
+    public function galleryImages()
+    {
+        return $this->morphMany(Image::class, 'imageable')->where('type', 'gallery');
+    }
+    protected function mainImageUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn() =>
+            $this->mainImage
+                ? Storage::disk('custom')->url($this->mainImage->path)
+                : null
+        );
+    }
+
+    protected function galleryImagesUrls(): Attribute
+    {
+        return Attribute::make(
+            get: fn() =>
+            $this->galleryImages->map(
+                fn($img) => Storage::disk('custom')->url($img->path)
+            )
+        );
+    }
+
+    protected function imagesUrls(): Attribute
+    {
+        return Attribute::make(
+            get: fn() =>
+            $this->images->map(
+                fn($img) => Storage::disk('custom')->url($img->path)
+            )
+        );
     }
 }

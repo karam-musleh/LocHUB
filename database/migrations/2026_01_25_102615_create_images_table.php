@@ -17,6 +17,7 @@ return new class extends Migration
             // imageable_id
             // imageable_type
             $table->string('path');
+            $table->string('type')->default('gallery');
 
             $table->timestamps();
         });

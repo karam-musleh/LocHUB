@@ -15,11 +15,9 @@ class LocationController extends Controller
 {
     use ApiResponseTrait;
 
-    // use ApiResponserTrait;
-    //index
+
     public function index(Request $request)
     {
-        // dd(class_exists(\App\Traits\ApiResponseTrait::class));
 
         $request->validate([
             'type' => 'nullable|in:governorate,city,area',
@@ -39,7 +37,7 @@ class LocationController extends Controller
         }
 
 
-        $locations = $query->orderBy('id')->get();
+        $locations = $query->with('children')->orderBy('id')->get();
 
         return $this->successResponse(
             LocationResource::collection($locations),

@@ -23,12 +23,12 @@ class RegisterRequest extends FormRequest
         ];
 
         // حسب الدور
-        if ($this->role === 'hub_owner') {
-            $rules['name.ar'] = 'required|string|max:255';
-            $rules['name.en'] = 'required|string|max:255';
-        } else {
-            $rules['name'] = 'required|string|max:255';
-        }
+        // if ($this->role === 'hub_owner') {
+        //     $rules['name.ar'] = 'required|string|max:255';
+        //     $rules['name.en'] = 'required|string|max:255';
+        // } else {
+        //     $rules['name'] = 'required|string|max:255';
+        // }
         return $rules;
     }
 }

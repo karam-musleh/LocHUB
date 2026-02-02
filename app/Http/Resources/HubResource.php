@@ -19,6 +19,14 @@ class HubResource extends JsonResource
                 'name' => $this->location->name,
                 'type' => $this->location->type,
             ],
+
+            "images" => [
+                "main" => $this->main_image_url,
+                "gallery" => $this->when(
+                    $this->relationLoaded('galleryImages'),
+                    fn() => $this->gallery_images_urls
+                ),
+            ],
             'status' => $this->status,
             'owner' => [
                 'id' => $this->owner->id,
