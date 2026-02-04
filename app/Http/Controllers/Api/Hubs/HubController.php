@@ -44,26 +44,26 @@ class HubController extends Controller
         }
 
         // رفع معرض الصور
-if ($request->hasFile('gallery')) {
-    $images = [];
+        if ($request->hasFile('gallery')) {
+            $images = [];
 
-    foreach ($request->file('gallery') as $file) {
-        $path = $file->store('hubs/gallery', 'custom');
+            foreach ($request->file('gallery') as $file) {
+                $path = $file->store('hubs/gallery', 'custom');
 
-        $image = $hub->images()->create([
-            'path' => $path,
-            'type' => 'gallery',
-        ]);
+                $image = $hub->images()->create([
+                    'path' => $path,
+                    'type' => 'gallery',
+                ]);
 
-        $images[] = $image;
-    }
+                $images[] = $image;
+            }
 
-    // dd('Uploaded images:', $images);
-}
+            // dd('Uploaded images:', $images);
+        }
 
 
-        $hub->load('images', 'services', 'offers', 'bookings', 'reviews','location', 'owner','galleryImages');
-// dd($hub);
+        $hub->load('images', 'services', 'offers', 'bookings', 'reviews', 'location', 'owner', 'galleryImages');
+        // dd($hub);
         return $this->successResponse(new HubResource($hub), 'Hub created successfully', 201);
     }
 
@@ -118,7 +118,7 @@ if ($request->hasFile('gallery')) {
             $hub->load('images', 'location', 'owner');
 
             return $this->successResponse(new HubResource($hub), 'Hub updated successfully');
-        }  catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             return $this->errorResponse(
                 'Failed to update hub',
@@ -151,5 +151,31 @@ if ($request->hasFile('gallery')) {
         $hub->delete();
 
         return $this->successResponse(null, 'Hub deleted successfully');
+    }
+
+
+
+    // change hub status for admin
+    public function changeStatus(Request $request, $hubId)
+    {
+        $request->validate([
+            'status' => ['required', 'in:' . implode(',', array_map(fn($status) => $status->value, HubStatus::cases()))],
+            'rejection_reason' => ['nullable', 'string', 'required_if:status,' . HubStatus::REJECTED->value],
+
+        ]);
+
+        $hub = Hub::find($hubId);
+
+        if (!$hub) {
+            return $this->errorResponse('Hub not found', 404);
+        }
+
+        $hub->status = $request->status;
+        $hub->rejection_reason = $request->status === 'rejected' ? $request->rejection_reason : null;
+        $hub->save();
+        return $this->successResponse(
+            new HubResource($hub),
+            "Hub status changed to {$hub->status}"
+        );
     }
 }

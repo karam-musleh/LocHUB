@@ -22,6 +22,7 @@ class Hub extends Model
         'description',
         'address_details',
         'status',
+        'rejection_reason',
         // 'images',
     ];
     protected $translatable = [

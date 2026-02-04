@@ -36,3 +36,6 @@ Route::prefix('hubs')->middleware('auth:api')->group(function () {
     // حذف هب
     Route::delete('{slug}', [HubController::class, 'destroy']);
 });
+Route::middleware(['auth:api', 'admin'])->group(function () {
+    Route::patch('hubs/{hub}/status', [HubController::class, 'changeStatus']);
+});

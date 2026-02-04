@@ -24,6 +24,7 @@ return new class extends Migration
             $table->json('description')->nullable();
             $table->json('address_details');
             $table->string('status')->default('pending');
+            $table->text('rejection_reason')->nullable();
 
 
             $table->timestamps();

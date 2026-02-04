@@ -28,6 +28,7 @@ class HubResource extends JsonResource
                 ),
             ],
             'status' => $this->status,
+            'rejection_reason' => $this->rejection_reason,
             'owner' => [
                 'id' => $this->owner->id,
                 'name' => $this->owner->name,

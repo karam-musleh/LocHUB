@@ -13,21 +13,21 @@ return new class extends Migration
     {
         Schema::create('offers', function (Blueprint $table) {
             $table->id();
-                   $table->foreignId('hub_id')
-              ->constrained('hubs')
-              ->cascadeOnDelete();
+            $table->foreignId('hub_id')
+                ->constrained('hubs')
+                ->cascadeOnDelete();
 
-        $table->json('title');
-        $table->string('type', 20)->default('daily');
+            $table->json('title');
+            $table->string('type', 20)->default('daily');
 
-        $table->bigInteger('price');
+            $table->bigInteger('price');
 
-        $table->integer('duration');
-        // بالساعات (daily) أو الأيام (weekly / monthly)
+            $table->integer('duration');
+            // بالساعات (daily) أو الأيام (weekly / monthly)
 
-        $table->json('description')->nullable();
+            $table->json('description')->nullable();
 
-        $table->string('status')->default('pending');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }
