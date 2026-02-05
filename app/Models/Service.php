@@ -7,14 +7,18 @@ use Spatie\Translatable\HasTranslations;
 
 class Service extends Model
 {
-    use HasTranslations ;
+    use HasTranslations;
     protected $fillable = [
         'hup_id',
         'name',
         'description'
     ];
     //
-    protected $translation =[
+    protected $casts = [
+        'name' => 'array',
+        'description' => 'array',
+    ];
+    protected $translation = [
         'name',
         'description'
     ];
