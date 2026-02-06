@@ -8,15 +8,17 @@ use App\Traits\ApiResponseTrait;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\ServiceResource;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Gate;
 
 class ServiceController extends Controller
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, AuthorizesRequests;
 
     public function index(Hub $hub)
     {
-    $per_page = request()->query('per_page', 10); // عدد العناصر في الصفحة، افتراضي 10
-    // للـ performance: استخدم pagination للـ hubs اللي فيها خدمات كثيرة
+        $per_page = request()->query('per_page', 10); // عدد العناصر في الصفحة، افتراضي 10
+        // للـ performance: استخدم pagination للـ hubs اللي فيها خدمات كثيرة
         $services = $hub->services()
             ->latest()
             ->paginate($per_page);
@@ -29,6 +31,8 @@ class ServiceController extends Controller
 
     public function store(Hub $hub, ServiceRequest $request)
     {
+      Gate::authorize('create', [Service::class, $hub]);
+
         $service = $hub->services()->create($request->validated());
 
         return $this->successResponse(
@@ -37,6 +41,7 @@ class ServiceController extends Controller
             201
         );
     }
+
 
     public function show(Hub $hub, Service $service)
     {
@@ -51,6 +56,9 @@ class ServiceController extends Controller
 
     public function update(Hub $hub, Service $service, ServiceRequest $request)
     {
+            $service->loadMissing('hub');
+        $this->authorize('update', $service);
+
         $service->update($request->validated());
 
         return $this->successResponse(
@@ -61,6 +69,8 @@ class ServiceController extends Controller
 
     public function destroy(Hub $hub, Service $service)
     {
+        $this->authorize('delete', $service);
+
         $service->delete();
 
         return $this->successResponse(
