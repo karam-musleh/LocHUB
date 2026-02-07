@@ -44,12 +44,12 @@ Route::middleware(['auth:api', 'admin'])->group(function () {
 
 
 Route::prefix('hubs/{hub}')->group(function () {
-
     Route::get('/services', [ServiceController::class, 'index']);      // كل خدمات الهب
-    Route::post('/services', [ServiceController::class, 'store']);     // اضافة خدمة للهب
-
     Route::get('/services/{service}', [ServiceController::class, 'show']);   // تفاصيل خدمة
+});
+
+Route::prefix('hubs/{hub}')->middleware('auth:api')->group(function () {
+    Route::post('/services', [ServiceController::class, 'store']);     // اضافة خدمة للهب
     Route::put('/services/{service}', [ServiceController::class, 'update']); // تعديل خدمة
     Route::delete('/services/{service}', [ServiceController::class, 'destroy']); // حذف خدمة
-
 });

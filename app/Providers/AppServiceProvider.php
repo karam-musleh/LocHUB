@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Hub;
 use App\Models\Service;
+use App\Policies\HubPolicy;
 use App\Policies\ServicePolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -12,9 +14,9 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    protected $policies = [
-        Service::class => ServicePolicy::class,
-    ];
+    // protected $policies = [
+    //     Service::class => ServicePolicy::class,
+    // ];
 
 
     public function register(): void
@@ -27,9 +29,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::policy(Service::class, ServicePolicy::class);
+
         //
-    Gate::policy(Service::class, ServicePolicy::class);
-
-
+        // Gate::policy(Service::class, ServicePolicy::class);
+        // Gate::policy(Hub::class, HubPolicy::class);
     }
 }

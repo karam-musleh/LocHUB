@@ -41,8 +41,9 @@ class ServicePolicy
      */
     public function create(User $user, Hub $hub): bool
     {
-    return true ;
-        // return $this->isOwner($user, $hub->owner_id);
+
+        return $this->isOwner($user, $hub->owner_id);
+
     }
 
     /**

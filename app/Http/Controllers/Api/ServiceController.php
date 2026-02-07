@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Hub;
 use App\Models\Service;
+use App\Policies\ServicePolicy;
 use App\Traits\ApiResponseTrait;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\ServiceResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\Gate;
 
 class ServiceController extends Controller
 {
@@ -31,8 +32,9 @@ class ServiceController extends Controller
 
     public function store(Hub $hub, ServiceRequest $request)
     {
-      Gate::authorize('create', [Service::class, $hub]);
-
+        $user = auth('api')->user();
+        // dd($user->id === $hub->owner_id);
+        $this->authorize('create', [Service::class, $hub]);
         $service = $hub->services()->create($request->validated());
 
         return $this->successResponse(
@@ -56,9 +58,9 @@ class ServiceController extends Controller
 
     public function update(Hub $hub, Service $service, ServiceRequest $request)
     {
-            $service->loadMissing('hub');
+        $service->loadMissing('hub');
         $this->authorize('update', $service);
-
+        // dd($request->validated());
         $service->update($request->validated());
 
         return $this->successResponse(

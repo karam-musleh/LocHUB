@@ -21,4 +21,8 @@ trait HandlesOwnership
     {
         return (int) $user->id === (int) $ownerId;
     }
+    protected function ownsHub(User $user, $hub): bool
+    {
+        return $this->isOwner($user, $hub->owner_id);
+    }
 }
