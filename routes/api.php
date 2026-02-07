@@ -5,7 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\Hubs\HubController;
 use App\Http\Controllers\Api\RegisterController;
-use App\Http\Controllers\Api\DashBorad\LocationController;
+use App\Http\Controllers\Api\DashBoard\OfferController;
+use App\Http\Controllers\Api\DashBoard\LocationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -52,4 +53,17 @@ Route::prefix('hubs/{hub}')->middleware('auth:api')->group(function () {
     Route::post('/services', [ServiceController::class, 'store']);     // اضافة خدمة للهب
     Route::put('/services/{service}', [ServiceController::class, 'update']); // تعديل خدمة
     Route::delete('/services/{service}', [ServiceController::class, 'destroy']); // حذف خدمة
+    Route::get('/offers', [OfferController::class, 'index']);
+
+    // إضافة عرض جديد للهب
+    Route::post('/offers', [OfferController::class, 'store']);
+
+    // تفاصيل عرض محدد
+    Route::get('/offers/{offer}', [OfferController::class, 'show']);
+
+    // تعديل عرض محدد
+    Route::put('/offers/{offer}', [OfferController::class, 'update']);
+
+    // حذف عرض محدد
+    Route::delete('/offers/{offer}', [OfferController::class, 'destroy']);
 });

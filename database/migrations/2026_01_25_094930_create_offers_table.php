@@ -27,7 +27,7 @@ return new class extends Migration
 
             $table->json('description')->nullable();
 
-            $table->string('status')->default('pending');
+            $table->string('status')->default('soon');
             $table->timestamps();
         });
     }

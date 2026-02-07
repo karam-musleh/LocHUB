@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\DashBorad;
+namespace App\Http\Controllers\Api\DashBoard;
 
 use App\Models\Location;
 use Illuminate\Http\Request;

@@ -32,8 +32,6 @@ class ServiceController extends Controller
 
     public function store(Hub $hub, ServiceRequest $request)
     {
-        $user = auth('api')->user();
-        // dd($user->id === $hub->owner_id);
         $this->authorize('create', [Service::class, $hub]);
         $service = $hub->services()->create($request->validated());
 
