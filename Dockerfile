@@ -1,15 +1,22 @@
-FROM php:8.4-cli
+FROM php:8.4-fpm
 
-WORKDIR /var/www
-
+# تثبيت الامتدادات المطلوبة للـLaravel
 RUN apt-get update && apt-get install -y \
-    git unzip curl libzip-dev zip \
-    && docker-php-ext-install pdo pdo_mysql zip
+    libzip-dev \
+    unzip \
+    git \
+    curl \
+    && docker-php-ext-install zip pdo_mysql
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
+# نسخ المشروع
+WORKDIR /var/www
 COPY . .
 
-RUN composer install --optimize-autoloader --no-interaction --no-dev
+# تثبيت Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-CMD php artisan serve --host=0.0.0.0 --port=8080
+# تثبيت الحزم
+RUN composer install --optimize-autoloader --no-interaction
+
+# تشغيل السيرفر
+CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
