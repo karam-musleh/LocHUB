@@ -1,20 +1,15 @@
-FROM php:8.3-cli
-
-# System deps
-RUN apt-get update && apt-get install -y \
-    git unzip curl libzip-dev zip \
-    libpng-dev libonig-dev libxml2-dev
-
-# PHP extensions
-RUN docker-php-ext-install pdo pdo_mysql mbstring zip exif pcntl
-
-# Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+FROM php:8.4-cli
 
 WORKDIR /var/www
 
+RUN apt-get update && apt-get install -y \
+    git unzip curl libzip-dev zip \
+    && docker-php-ext-install pdo pdo_mysql zip
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 COPY . .
 
-RUN composer install --optimize-autoloader --no-interaction
+RUN composer install --optimize-autoloader --no-interaction --no-dev
 
 CMD php artisan serve --host=0.0.0.0 --port=8080
