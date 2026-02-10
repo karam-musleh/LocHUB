@@ -9,6 +9,7 @@ class ImageHelper
 {
 
     // Upload a single image
+    // $type can be 'main' or 'gallery' or any other type you want to define
     public static function uploadImage($model, UploadedFile $file, string $folder, string $type = 'main', string $disk = 'custom')
     {
         $path = $file->store($folder, $disk);
