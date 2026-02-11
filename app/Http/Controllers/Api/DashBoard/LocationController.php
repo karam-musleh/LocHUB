@@ -50,7 +50,7 @@ class LocationController extends Controller
     public function store(LocationRequest $request)
     {
         $location = Location::create($request->validated());
-        dd($location);
+        // dd($location);
         return $this->successResponse(new LocationResource($location), 'Location created successfully', 201);
     }
 

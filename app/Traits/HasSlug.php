@@ -25,19 +25,29 @@ trait HasSlug
             }
         });
     }
-
     public function generateSlug($value)
     {
-        // لو القيمة Array (Translatable)
         if (is_array($value)) {
-            $value = $value['en'] ?? reset($value);
+            // خذ الإنجليزي إذا موجود ومش فاضي، وإلا خذ أي لغة ثانية غير عربية
+            $value = (isset($value['en']) && !empty(trim($value['en'])))
+                ? $value['en']
+                : collect($value)
+                ->filter(fn($v) => !empty(trim($v ?? '')))
+                ->first() ?? '';
         }
 
         $baseSlug = Str::slug($value);
+
+        // إذا الـ slug فاضي (مثلاً النص كله عربي)
+        if (empty($baseSlug)) {
+            $baseSlug = 'item'; // أو أي default تحبه
+        }
+
         $slug = $baseSlug;
         $count = 1;
 
-        while (static::where('slug', $slug)
+        while (
+            static::where('slug', $slug)
             ->where('id', '!=', $this->id ?? 0)
             ->exists()
         ) {
