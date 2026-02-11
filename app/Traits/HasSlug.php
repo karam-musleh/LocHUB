@@ -6,61 +6,78 @@ use Illuminate\Support\Str;
 
 trait HasSlug
 {
-    //
     protected static function bootHasSlug()
     {
         static::creating(function ($model) {
-            $slugColumn = property_exists($model, 'slugFrom') ? $model->slugFrom : 'name';
-
-            // Don't try to generate slug from translatable attributes during creating
-            // Wait for the model to be fully saved first
             if (empty($model->slug)) {
-                $model->slug = $model->generateSlug('temporary-' . uniqid());
-            }
-        });
-
-        static::created(function ($model) {
-            // After creation, generate proper slug from the name attribute
-            $slugColumn = property_exists($model, 'slugFrom') ? $model->slugFrom : 'name';
-
-            // Check if there's a translatable name attribute
-            if (isset($model->attributes[$slugColumn])) {
-                $value = $model->attributes[$slugColumn];
-                $newSlug = $model->generateSlug($value);
-
-                if ($newSlug !== $model->slug) {
-                    $model->update(['slug' => $newSlug]);
-                }
+                $model->slug = $model->generateSlugFromModel();
             }
         });
 
         static::updating(function ($model) {
-            $slugColumn = property_exists($model, 'slugFrom') ? $model->slugFrom : 'name';
+            $slugColumn = $model->getSlugSourceColumn();
 
             if ($model->isDirty($slugColumn)) {
-                $value = $model->attributes[$slugColumn] ?? null;
-                if ($value) {
-                    $model->slug = $model->generateSlug($value);
-                }
+                $model->slug = $model->generateSlugFromModel();
             }
         });
     }
-    public function generateSlug($value)
+
+    // يرجع اسم الكولوم اللي الـ slug بيتولّد منه
+    protected function getSlugSourceColumn(): string
     {
-        if (is_array($value)) {
-            // خذ الإنجليزي إذا موجود ومش فاضي، وإلا خذ أي لغة ثانية غير عربية
-            $value = (isset($value['en']) && !empty(trim($value['en'])))
-                ? $value['en']
-                : collect($value)
+        return property_exists($this, 'slugFrom') ? $this->slugFrom : 'name';
+    }
+
+    // يجيب القيمة الفعلية من الكولوم (سواء كان translatable أو لا)
+    protected function getSlugSourceValue(): string
+    {
+        $column = $this->getSlugSourceColumn();
+
+        // لو في translatable وهاد الكولوم منها
+        if (
+            method_exists($this, 'getTranslations') &&
+            in_array($column, $this->translatable ?? [])
+        ) {
+            $translations = $this->getTranslations($column);
+
+            // أولوية: en → أول لغة موجودة وفيها قيمة
+            if (!empty(trim($translations['en'] ?? ''))) {
+                return $translations['en'];
+            }
+
+            return collect($translations)
                 ->filter(fn($v) => !empty(trim($v ?? '')))
                 ->first() ?? '';
         }
 
+        // لو مش translatable، رجّع القيمة مباشرة
+        return $this->$column ?? '';
+    }
+
+    public function generateSlugFromModel(): string
+    {
+        return $this->generateSlug($this->getSlugSourceValue());
+    }
+
+    public function generateSlug(string $value): string
+    {
+        // لو القيمة JSON string (Spatie بتخزنها هيك)
+        if (!empty($value)) {
+            $decoded = json_decode($value, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $value = !empty(trim($decoded['en'] ?? ''))
+                    ? $decoded['en']
+                    : collect($decoded)
+                        ->filter(fn($v) => !empty(trim($v ?? '')))
+                        ->first() ?? '';
+            }
+        }
+
         $baseSlug = Str::slug($value);
 
-        // إذا الـ slug فاضي (مثلاً النص كله عربي)
         if (empty($baseSlug)) {
-            $baseSlug = 'item'; // أو أي default تحبه
+            $baseSlug = 'item';
         }
 
         $slug = $baseSlug;
@@ -68,8 +85,8 @@ trait HasSlug
 
         while (
             static::where('slug', $slug)
-            ->where('id', '!=', $this->id ?? 0)
-            ->exists()
+                ->where('id', '!=', $this->id ?? 0)
+                ->exists()
         ) {
             $slug = "{$baseSlug}-{$count}";
             $count++;
