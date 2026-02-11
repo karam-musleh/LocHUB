@@ -8,15 +8,19 @@ class HubResource extends JsonResource
 {
     public function toArray($request): array
     {
+
+        $lang = request()->query('lang', app()->getLocale());
+
         return [
             'id' => $this->id,
             'slug' => $this->slug,
-            'name' => $this->name,
-            'description' => $this->description,
-            'address_details' => $this->address_details,
+            // 'name' => $this->getTranslation('name', $lang),
+            'name' => $this->getTranslation('name', $lang),
+            'description' => $this->getTranslation('description', $lang),
+            'address_details' => $this->getTranslation('address_details' , $lang),
             'location' => [
                 'id' => $this->location->id,
-                'name' => $this->location->name,
+                'name' => $this->location->getTranslation('name', $lang),
                 'type' => $this->location->type,
             ],
 

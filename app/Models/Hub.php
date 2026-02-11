@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 class Hub extends Model
 {
 
-    use HasSlug, HasTranslations;
+    use HasTranslations, HasSlug;
 
     protected $fillable = [
         'name',
@@ -25,11 +25,13 @@ class Hub extends Model
         'rejection_reason',
         // 'images',
     ];
+
     protected $translatable = [
         'name',
         'description',
         'address_details'
     ];
+
     protected $casts = [
         'status' => HubStatus::class
     ];
@@ -113,9 +115,8 @@ class Hub extends Model
         );
     }
 
-public function getRouteKeyName()
-{
-    return 'slug';
-}
-
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 }

@@ -14,11 +14,13 @@ class OfferResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $lang = request()->query('lang', app()->getLocale());
+
         return [
             'id' => $this->id,
             'hub_id' => $this->hub_id,
-            'title' => $this->title,
-            'description' => $this->description,
+            'title' => $this->getTranslation('title', $lang),
+            'description' => $this->getTranslation('description', $lang),
             'type' => $this->type,
             'price' => $this->price,
             'duration' => $this->duration,

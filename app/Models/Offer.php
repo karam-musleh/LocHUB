@@ -20,7 +20,7 @@ protected $fillable = [
 'description',
 'status',
 ];
-protected $translation = [
+public $translation = [
     'title',
     'description'
 ];

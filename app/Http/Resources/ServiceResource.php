@@ -14,11 +14,13 @@ class ServiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $lang = request()->query('lang', app()->getLocale());
+
         return [
             'id' => $this->id,
             'hub_id' => $this->hub_id,
-            'name' => $this->name,
-            'description' => $this->description,
+            'name' => $this->getTranslation('name', $lang),
+            'description' => $this->getTranslation('description', $lang),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

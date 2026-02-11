@@ -15,10 +15,12 @@ class LocationResource extends JsonResource
     public function toArray(Request $request): array
     {
 
-    
+$lang = request()->query('lang', app()->getLocale());
+
+
         return [
             'id' => $this->id,
-            'name' => $this->name,
+            'name' => $this->getTranslation('name', $lang),
             'slug' => $this->slug,
             'parent_id' => $this->parent_id,
             'type' => $this->type,

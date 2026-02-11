@@ -21,6 +21,8 @@ class Location extends Model
     ];
     protected $casts = [
         'type' => LocationType::class,
+        'name' => 'array',
+        'slug' => 'string',
     ];
     public $translatable = ['name'];
 

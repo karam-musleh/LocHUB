@@ -21,7 +21,7 @@ class Service extends Model
         'name' => 'array',
         'description' => 'array',
     ];
-    protected $translation = [
+     public $translatable = [
         'name',
         'description'
     ];

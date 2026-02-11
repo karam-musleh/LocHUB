@@ -12,8 +12,25 @@ trait HasSlug
         static::creating(function ($model) {
             $slugColumn = property_exists($model, 'slugFrom') ? $model->slugFrom : 'name';
 
-            if (empty($model->slug) && isset($model->$slugColumn)) {
-                $model->slug = $model->generateSlug($model->$slugColumn);
+            // Don't try to generate slug from translatable attributes during creating
+            // Wait for the model to be fully saved first
+            if (empty($model->slug)) {
+                $model->slug = $model->generateSlug('temporary-' . uniqid());
+            }
+        });
+
+        static::created(function ($model) {
+            // After creation, generate proper slug from the name attribute
+            $slugColumn = property_exists($model, 'slugFrom') ? $model->slugFrom : 'name';
+            
+            // Check if there's a translatable name attribute
+            if (isset($model->attributes[$slugColumn])) {
+                $value = $model->attributes[$slugColumn];
+                $newSlug = $model->generateSlug($value);
+                
+                if ($newSlug !== $model->slug) {
+                    $model->update(['slug' => $newSlug]);
+                }
             }
         });
 
@@ -21,7 +38,10 @@ trait HasSlug
             $slugColumn = property_exists($model, 'slugFrom') ? $model->slugFrom : 'name';
 
             if ($model->isDirty($slugColumn)) {
-                $model->slug = $model->generateSlug($model->$slugColumn);
+                $value = $model->attributes[$slugColumn] ?? null;
+                if ($value) {
+                    $model->slug = $model->generateSlug($value);
+                }
             }
         });
     }
