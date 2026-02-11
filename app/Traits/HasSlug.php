@@ -22,12 +22,12 @@ trait HasSlug
         static::created(function ($model) {
             // After creation, generate proper slug from the name attribute
             $slugColumn = property_exists($model, 'slugFrom') ? $model->slugFrom : 'name';
-            
+
             // Check if there's a translatable name attribute
             if (isset($model->attributes[$slugColumn])) {
                 $value = $model->attributes[$slugColumn];
                 $newSlug = $model->generateSlug($value);
-                
+
                 if ($newSlug !== $model->slug) {
                     $model->update(['slug' => $newSlug]);
                 }
