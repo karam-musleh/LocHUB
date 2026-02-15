@@ -70,7 +70,10 @@ class Hub extends Model
     {
         return $this->hasMany(Review::class);
     }
-
+    public function socialAccounts()
+    {
+        return $this->hasMany(SocialAccount::class);
+    }
     // صور الهب (Morph)
     public function images()
     {
@@ -120,3 +123,4 @@ class Hub extends Model
         return 'slug';
     }
 }
+

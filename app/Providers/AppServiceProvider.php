@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Models\Hub;
 use App\Models\Service;
+use App\Models\SocialAccount;
 use App\Policies\HubPolicy;
 use App\Policies\ServicePolicy;
+use App\Policies\SocialAccountPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::policy(Service::class, ServicePolicy::class);
+        Gate::policy(Hub::class, HubPolicy::class);
+        Gate::policy(SocialAccount::class, SocialAccountPolicy::class);
 
         //
         // Gate::policy(Service::class, ServicePolicy::class);

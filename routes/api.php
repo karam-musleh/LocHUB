@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\DashBoard\LocationController;
+use App\Http\Controllers\Api\DashBoard\OfferController;
+use App\Http\Controllers\Api\Hubs\HubController;
+use App\Http\Controllers\Api\Hubs\SocialController;
+use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\ServiceController;
-use App\Http\Controllers\Api\Hubs\HubController;
-use App\Http\Controllers\Api\RegisterController;
-use App\Http\Controllers\Api\DashBoard\OfferController;
-use App\Http\Controllers\Api\DashBoard\LocationController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -66,4 +67,15 @@ Route::prefix('hubs/{hub}')->middleware('auth:api')->group(function () {
 
     // حذف عرض محدد
     Route::delete('/offers/{offer}', [OfferController::class, 'destroy']);
+});
+
+Route::middleware('auth:api')->group(function () {
+
+    // Social Accounts Routes (nested under hubs)
+    Route::prefix('hubs/{hub}')->group(function () {
+        Route::apiResource('social-accounts', SocialController::class)
+             ->scoped(['socialAccount' => 'hub']) // 🔥 تحقق تلقائي من العلاقة
+             ->parameters(['social-accounts' => 'socialAccount']); // تسمية الـ parameter
+    });
+
 });

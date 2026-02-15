@@ -38,6 +38,7 @@ class HubResource extends JsonResource
                 'name' => $this->owner->name,
                 'email' => $this->owner->email,
             ],
+            'social_Accounts' => SocialResource::collection($this->whenLoaded('socialAccounts')),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];
