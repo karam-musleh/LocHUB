@@ -11,15 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('social_accounts', function (Blueprint $table) {
+        Schema::create('initiative_categories', function (Blueprint $table) {
             $table->id();
-
-            // accountable_id
-            // accountable_type
-
-            $table->string('platform'); // instagram, facebook...
-            $table->string('url');
-            $table->string('type')->default('hub'); // hub, initiative, user
             $table->timestamps();
         });
     }
@@ -29,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('social_accounts');
+        Schema::dropIfExists('initiative_categories');
     }
 };

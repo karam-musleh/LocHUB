@@ -72,7 +72,7 @@ class Hub extends Model
     }
     public function socialAccounts()
     {
-        return $this->hasMany(SocialAccount::class);
+        return $this->morphMany(SocialAccount::class, 'accountable');
     }
     // صور الهب (Morph)
     public function images()
@@ -123,4 +123,3 @@ class Hub extends Model
         return 'slug';
     }
 }
-

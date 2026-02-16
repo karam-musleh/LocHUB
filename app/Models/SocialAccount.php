@@ -8,12 +8,12 @@ class SocialAccount extends Model
 {
     //
     protected $fillable = [
-        'hub_id',
         'platform',
         'url',
     ];
-    public function hub()
-    {
-        return $this->belongsTo(Hub::class);
-    }
+public function accountable()
+{
+    return $this->morphTo();
+}
+
 }

@@ -17,12 +17,14 @@ class HubResource extends JsonResource
             // 'name' => $this->getTranslation('name', $lang),
             'name' => $this->getTranslation('name', $lang),
             'description' => $this->getTranslation('description', $lang),
-            'address_details' => $this->getTranslation('address_details' , $lang),
-            'location' => [
-                'id' => $this->location->id,
-                'name' => $this->location->getTranslation('name', $lang),
-                'type' => $this->location->type,
-            ],
+            'address_details' => $this->getTranslation('address_details', $lang),
+            'location' => $this->whenLoaded('location', function () use ($lang) {
+                return [
+                    'id' => $this->location->id,
+                    'name' => $this->location->getTranslation('name', $lang),
+                    'type' => $this->location->type,
+                ];
+            }),
 
             "images" => [
                 "main" => $this->main_image_url,
@@ -33,14 +35,17 @@ class HubResource extends JsonResource
             ],
             'status' => $this->status,
             'rejection_reason' => $this->rejection_reason,
-            'owner' => [
-                'id' => $this->owner->id,
-                'name' => $this->owner->name,
-                'email' => $this->owner->email,
-            ],
-            'social_Accounts' => SocialResource::collection($this->whenLoaded('socialAccounts')),
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'owner' => $this->whenLoaded('owner', function () {
+                return [
+                    'id' => $this->owner->id,
+                    'name' => $this->owner->name,
+                    'email' => $this->owner->email,
+                ];
+            }),
+            'social_accounts' => $this->when(
+                $this->relationLoaded('socialAccounts'),
+                fn() => SocialAccountResource::collection($this->socialAccounts)
+            ),
         ];
     }
 }

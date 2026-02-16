@@ -23,7 +23,7 @@ class SocialController extends Controller
      *   "data": [
      *     {
      *       "id": 1,
-     *       "platform": "facebook",
+     *       "platform": "facebook",    
      *       "url": "https://facebook.com/hub"
      *     }
      *   ]
