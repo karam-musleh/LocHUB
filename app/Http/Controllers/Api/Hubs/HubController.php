@@ -60,13 +60,9 @@ class HubController extends Controller
         }
         // إضافة الحسابات الاجتماعية
         if (!empty($hubData['social_accounts'])) {
-            $hub->socialAccounts()->createMany($hubData['social_accounts']);
+            $hub->hubSocialAccounts()->createMany($hubData['social_accounts']);
         }
-        dd($hub->socialAccounts);
-
-
-        $hub->load('images', 'services', 'offers', 'bookings', 'reviews', 'location', 'owner', 'galleryImages', 'socialAccounts');
-        // dd($hub);
+        $hub->load('images', 'services', 'offers', 'bookings', 'reviews', 'location', 'owner', 'galleryImages', 'hubSocialAccounts');
         return $this->successResponse(new HubResource($hub), 'Hub created successfully', 201);
     }
 

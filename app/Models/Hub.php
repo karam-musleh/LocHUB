@@ -24,6 +24,7 @@ class Hub extends Model
         'status',
         'rejection_reason',
         // 'images',
+
     ];
 
     protected $translatable = [
@@ -70,10 +71,11 @@ class Hub extends Model
     {
         return $this->hasMany(Review::class);
     }
-    public function socialAccounts()
-    {
-        return $this->morphMany(SocialAccount::class, 'accountable');
-    }
+
+public function hubSocialAccounts()
+{
+    return $this->morphMany(SocialAccount::class, 'accountable');
+}
     // صور الهب (Morph)
     public function images()
     {

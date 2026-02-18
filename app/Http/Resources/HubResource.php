@@ -43,8 +43,14 @@ class HubResource extends JsonResource
                 ];
             }),
             'social_accounts' => $this->when(
-                $this->relationLoaded('socialAccounts'),
-                fn() => SocialAccountResource::collection($this->socialAccounts)
+                $this->relationLoaded('hubSocialAccounts'),
+                fn() => $this->hubSocialAccounts->map(function ($account) {
+                    return [
+                        'id' => $account->id,
+                        'platform' => $account->platform,
+                        'url' => $account->url,
+                    ];
+                })
             ),
         ];
     }

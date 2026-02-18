@@ -8,9 +8,10 @@ class Initiative extends Model
 {
     //
 
-
-    public function socialAccounts()
+    public function initiativeSocialAccounts()
     {
         return $this->morphMany(SocialAccount::class, 'accountable');
     }
+
 }
+    

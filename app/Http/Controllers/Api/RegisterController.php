@@ -28,28 +28,17 @@ class RegisterController extends Controller
 {
 
     use ApiResponseTrait;
-    //
     /**
- * @OA\Post(
- *     path="/api/register",
- *     tags={"Auth"},
- *     summary="Register new user",
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"name","email","password"},
- *             @OA\Property(property="name", type="string", example="Ahmad"),
- *             @OA\Property(property="email", type="string", example="ahmad@mail.com"),
- *             @OA\Property(property="phone", type="string", example="0599999999"),
- *             @OA\Property(property="password", type="string", example="12345678"),
- *             @OA\Property(property="role", type="string", example="user"),
- *             @OA\Property(property="location_id", type="integer", example=1),
- *             @OA\Property(property="specialization", type="string", example="plumber")
- *         )
- *     ),
- *     @OA\Response(response=201, description="User registered successfully")
- * )
- */
+     * @OA\Get(
+     *     path="/api/test",
+     *     summary="Test endpoint",
+     *     tags={"Test"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success response"
+     *     )
+     * )
+     */
 
     public function register(RegisterRequest $request)
     {

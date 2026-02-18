@@ -11,6 +11,7 @@ class SocialAccount extends Model
         'platform',
         'url',
     ];
+
 public function accountable()
 {
     return $this->morphTo();

@@ -39,7 +39,7 @@ class HubRequest extends FormRequest
             'gallery' => [$isUpdate ? 'sometimes' : 'nullable', 'array'],
             'gallery.*' => ['image', 'mimes:jpg,jpeg,png', 'max:2048'],
 
-            'social_accounts' => ['nullable', 'array'],
+            'social_accounts' => ['required', 'array'],
             'social_accounts.*.platform' => ['required_with:social_accounts', 'string', 'max:255'],
             'social_accounts.*.url' => ['required_with:social_accounts', 'url', 'max:255'],
         ];

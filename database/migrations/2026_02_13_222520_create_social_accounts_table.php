@@ -16,10 +16,9 @@ return new class extends Migration
 
             // accountable_id
             // accountable_type
-
+            $table->morphs('accountable');
             $table->string('platform'); // instagram, facebook...
             $table->string('url');
-            $table->string('type')->default('hub'); // hub, initiative, user
             $table->timestamps();
         });
     }
