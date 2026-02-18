@@ -13,33 +13,34 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\RegisterRequest;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use OpenApi\Annotations as OA;
+use OpenApi\Attributes as OA;
 
 
-/**
- * @OA\Info(
- *     version="1.0.0",
- *     title="API Documentation",
- *     description="Example API documentation"
- * )
- */
 
 class RegisterController extends Controller
 {
 
     use ApiResponseTrait;
-    /**
-     * @OA\Get(
-     *     path="/api/test",
-     *     summary="Test endpoint",
-     *     tags={"Test"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Success response"
-     *     )
-     * )
-     */
-
+#[OA\Post(
+    path: "/api/register",
+    summary: "Register a new user",
+    tags: ["Auth"],
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["name","email","password"],
+            properties: [
+                new OA\Property(property: "name", type: "string", example: "John Doe"),
+                new OA\Property(property: "email", type: "string", example: "test@test.com"),
+                new OA\Property(property: "password", type: "string", example: "123456")
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 201, description: "User registered successfully"),
+        new OA\Response(response: 400, description: "Validation error")
+    ]
+)]
     public function register(RegisterRequest $request)
     {
         $user = User::create([
@@ -55,23 +56,24 @@ class RegisterController extends Controller
         return $this->successResponse(['user' => new UserResource($user), 'token' => $token], 'User registered successfully', 201);
     }
 
-    /**
- * @OA\Post(
- *     path="/api/login",
- *     tags={"Auth"},
- *     summary="User login",
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             required={"email","password"},
- *             @OA\Property(property="email", type="string", example="ahmad@mail.com"),
- *             @OA\Property(property="password", type="string", example="12345678")
- *         )
- *     ),
- *     @OA\Response(response=200, description="Login success"),
- *     @OA\Response(response=401, description="Invalid credentials")
- * )
- */
+#[OA\Post(
+    path: "/login",
+    summary: "User login",
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["email","password"],
+            properties: [
+                new OA\Property(property: "email", type: "string", example: "test@test.com"),
+                new OA\Property(property: "password", type: "string", example: "123456")
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: "Login successful"),
+        new OA\Response(response: 401, description: "Unauthorized")
+    ]
+)]
     public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -94,15 +96,24 @@ class RegisterController extends Controller
         );
     }
 
-    /**
- * @OA\Post(
- *     path="/api/logout",
- *     tags={"Auth"},
- *     summary="Logout user",
- *     security={{"bearerAuth":{}}},
- *     @OA\Response(response=200, description="Logged out successfully")
- * )
- */
+    #[OA\Post(
+    path: "/logout",
+    summary: "User logout",
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["email","password"],
+            properties: [
+                new OA\Property(property: "email", type: "string", example: "test@test.com"),
+                new OA\Property(property: "password", type: "string", example: "123456")
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: "Login successful"),
+        new OA\Response(response: 401, description: "Unauthorized")
+    ]
+)]
     public function logout()
     {
         try {
@@ -112,15 +123,25 @@ class RegisterController extends Controller
             return $this->errorResponse($e->getMessage(), 500);
         }
     }
-    /**
- * @OA\Post(
- *     path="/api/refresh",
- *     tags={"Auth"},
- *     summary="Refresh JWT token",
- *     security={{"bearerAuth":{}}},
- *     @OA\Response(response=200, description="Token refreshed")
- * )
- */
+
+    #[OA\Post(
+    path: "/refresh",
+    summary: "User refresh token",
+    requestBody: new OA\RequestBody(
+        required: true,
+        content: new OA\JsonContent(
+            required: ["email","password"],
+            properties: [
+                new OA\Property(property: "email", type: "string", example: "test@test.com"),
+                new OA\Property(property: "password", type: "string", example: "123456")
+            ]
+        )
+    ),
+    responses: [
+        new OA\Response(response: 200, description: "Login successful"),
+        new OA\Response(response: 401, description: "Unauthorized")
+    ]
+)]
     public function refresh()
     {
         try {
