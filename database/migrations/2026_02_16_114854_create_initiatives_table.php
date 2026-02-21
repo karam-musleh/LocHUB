@@ -16,25 +16,17 @@ return new class extends Migration
             $table->json('name');
             $table->string('slug')->unique();
             $table->json('description');
+            $table->json('what_we_offer');      // شو بتقدم - ar, en
+
 
             $table->foreignId('hub_id')
                 ->nullable()
                 ->constrained('hubs')
                 ->nullOnDelete();
-            $table->foreignId('category_id')
-                ->nullable()
-                ->constrained('initiative_categories')
-                ->nullOnDelete();
-            $table->string('location_type')->default('online'); // online, onsite, hybrid
             $table->foreignId('location_id')
                 ->nullable()
                 ->constrained('locations')
                 ->nullOnDelete();
-            $table->foreignId('social_account_id')
-                ->nullable()
-                ->constrained('social_accounts')
-                ->nullOnDelete();
-
             $table->date('start_date');
             $table->date('end_date')->nullable();
             $table->date('registration_deadline')->nullable();
