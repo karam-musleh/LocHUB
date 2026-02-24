@@ -72,13 +72,3 @@ Route::prefix('hubs/{hub}')->middleware('auth:api')->group(function () {
     Route::delete('/offers/{offer}', [OfferController::class, 'destroy']);
 });
 
-Route::middleware('auth:api')->group(function () {
-
-    // Social Accounts Routes (nested under hubs)
-    Route::prefix('hubs/{hub}')->group(function () {
-        Route::apiResource('social-accounts', SocialController::class)
-             ->scoped(['socialAccount' => 'hub']) // 🔥 تحقق تلقائي من العلاقة
-             ->parameters(['social-accounts' => 'socialAccount']); // تسمية الـ parameter
-    });
-
-});
