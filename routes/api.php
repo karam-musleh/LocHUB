@@ -18,6 +18,9 @@ Route::Post('/register', [RegisterController::class, 'register']);
 Route::Post('/login', [RegisterController::class, 'login']);
 Route::Post('/logout', [RegisterController::class, 'logout'])->middleware('auth:api');
 Route::Post('/refresh', [RegisterController::class, 'refresh'])->middleware('auth:api');
+Route::Get('/profile', [RegisterController::class, 'profile'])->middleware('auth:api');
+Route::Put('/profile', [RegisterController::class, 'updateProfile'])->middleware('auth:api');
+
 
 
 

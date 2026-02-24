@@ -111,6 +111,11 @@ class HubController extends Controller
                     'custom'
                 );
             }
+                // تحديث الحسابات الاجتماعية
+                if ($request->has('social_accounts')) {
+                    $hub->hubSocialAccounts()->delete();
+                    $hub->hubSocialAccounts()->createMany($request->input('social_accounts', []));
+                }
 
             DB::commit();
 
@@ -145,6 +150,7 @@ class HubController extends Controller
 
         // حذف كل الصور المرتبطة بالهب
         ImageHelper::deleteAll($hub);
+        
 
         // حذف الهب نفسه
         $hub->delete();

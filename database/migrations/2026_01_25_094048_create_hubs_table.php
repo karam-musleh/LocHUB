@@ -26,8 +26,6 @@ return new class extends Migration
             $table->string('status')->default('pending');
             $table->text('rejection_reason')->nullable();
 
-
-
             $table->timestamps();
         });
     }

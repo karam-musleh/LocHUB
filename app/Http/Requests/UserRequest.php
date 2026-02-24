@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SocialRequest extends FormRequest
+class UserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,11 +21,13 @@ class SocialRequest extends FormRequest
      */
     public function rules(): array
     {
-
         return [
-            'platform' => 'required|string|max:255',
-            'url' => 'required|url|max:255'
-
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users,email,' . $this->user()->id,
+            'phone' => 'sometimes|string|max:20',
+            'password' => 'sometimes|string|min:6|confirmed',
+            'location_id' => 'sometimes|exists:locations,id',
+            'specialization' => 'sometimes|string|max:255',
         ];
     }
 }

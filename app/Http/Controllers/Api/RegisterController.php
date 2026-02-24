@@ -2,18 +2,19 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\User;
-use Illuminate\Http\Request;
-use App\Traits\ApiResponseTrait;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
+use App\Traits\ApiResponseTrait;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Requests\RegisterRequest;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use OpenApi\Attributes as OA;
+use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 
 
@@ -153,5 +154,26 @@ class RegisterController extends Controller
         } catch (JWTException $e) {
             return $this->errorResponse('Could not refresh token', 401);
         }
+    }
+    public function profile()
+    {
+        $user = auth()->guard('api')->user();
+        return $this->successResponse(new UserResource($user), 'User retrieved successfully', 200);
+
+    }
+    //
+    // update profile
+    public function updateProfile(UserRequest $request)
+    {
+        $user = auth()->guard('api')->user();
+        $validatedData = $request->validated();
+
+        if (isset($validatedData['password'])) {
+            $validatedData['password'] = Hash::make($validatedData['password']);
+        }
+
+        $user->update($validatedData);
+
+        return $this->successResponse(new UserResource($user), 'Profile updated successfully', 200);
     }
 }
