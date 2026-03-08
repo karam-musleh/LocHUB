@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Location;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class LocationSeeder extends Seeder
 {
@@ -19,6 +20,7 @@ class LocationSeeder extends Seeder
                 'en' => 'North Gaza',
             ],
             'type' => 'governorate',
+            'slug' => 'north-gaza',
         ]);
 
         $middle = Location::create([
@@ -27,6 +29,7 @@ class LocationSeeder extends Seeder
                 'en' => 'Middle Area',
             ],
             'type' => 'governorate',
+            'slug' => 'middle-area',
         ]);
 
         $south = Location::create([
@@ -35,6 +38,7 @@ class LocationSeeder extends Seeder
                 'en' => 'South Gaza',
             ],
             'type' => 'governorate',
+            'slug' => 'south-gaza',
         ]);
 
         // =========================
@@ -48,6 +52,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'city',
             'parent_id' => $middle->id,
+            'slug' => 'deir-al-balah',
         ]);
 
         $nuseirat = Location::create([
@@ -57,6 +62,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'city',
             'parent_id' => $middle->id,
+            'slug' => 'nuseirat',
         ]);
 
         $maghazi = Location::create([
@@ -66,6 +72,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'city',
             'parent_id' => $middle->id,
+            'slug' => 'al-maghazi',
         ]);
 
         // =========================
@@ -79,6 +86,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'area',
             'parent_id' => $deirAlBalah->id,
+            'slug' => 'al-balad-deir-al-balah',
         ]);
 
         Location::create([
@@ -88,6 +96,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'area',
             'parent_id' => $deirAlBalah->id,
+            'slug' => 'al-baraka',
         ]);
 
         // =========================
@@ -101,6 +110,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'city',
             'parent_id' => $south->id,
+            'slug' => 'khan-younis',
         ]);
 
         // =========================
@@ -114,6 +124,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'area',
             'parent_id' => $khanYounis->id,
+            'slug' => 'downtown-khan-younis',
         ]);
 
         Location::create([
@@ -123,6 +134,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'area',
             'parent_id' => $khanYounis->id,
+            'slug' => 'al-mawasi',
         ]);
 
         Location::create([
@@ -132,6 +144,7 @@ class LocationSeeder extends Seeder
             ],
             'type' => 'area',
             'parent_id' => $khanYounis->id,
+            'slug' => 'al-qarara',
         ]);
     }
 }
