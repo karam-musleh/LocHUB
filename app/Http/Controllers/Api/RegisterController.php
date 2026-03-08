@@ -12,7 +12,6 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use OpenApi\Attributes as OA;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -22,26 +21,8 @@ class RegisterController extends Controller
 {
 
     use ApiResponseTrait;
-#[OA\Post(
-    path: "/api/register",
-    summary: "Register a new user",
-    tags: ["Auth"],
-    requestBody: new OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            required: ["name","email","password"],
-            properties: [
-                new OA\Property(property: "name", type: "string", example: "John Doe"),
-                new OA\Property(property: "email", type: "string", example: "test@test.com"),
-                new OA\Property(property: "password", type: "string", example: "123456")
-            ]
-        )
-    ),
-    responses: [
-        new OA\Response(response: 201, description: "User registered successfully"),
-        new OA\Response(response: 400, description: "Validation error")
-    ]
-)]
+
+
     public function register(RegisterRequest $request)
     {
         $user = User::create([
@@ -57,24 +38,6 @@ class RegisterController extends Controller
         return $this->successResponse(['user' => new UserResource($user), 'token' => $token], 'User registered successfully', 201);
     }
 
-#[OA\Post(
-    path: "/login",
-    summary: "User login",
-    requestBody: new OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            required: ["email","password"],
-            properties: [
-                new OA\Property(property: "email", type: "string", example: "test@test.com"),
-                new OA\Property(property: "password", type: "string", example: "123456")
-            ]
-        )
-    ),
-    responses: [
-        new OA\Response(response: 200, description: "Login successful"),
-        new OA\Response(response: 401, description: "Unauthorized")
-    ]
-)]
     public function login(LoginRequest $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -88,7 +51,7 @@ class RegisterController extends Controller
         $token = Auth::guard('api')->login($user);
         return $this->successResponse(
             [
-                new UserResource($user),
+                'user ' =>  new UserResource($user),
                 'token' => $token
             ],
             'User logged in successfully',
@@ -97,24 +60,7 @@ class RegisterController extends Controller
         );
     }
 
-    #[OA\Post(
-    path: "/logout",
-    summary: "User logout",
-    requestBody: new OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            required: ["email","password"],
-            properties: [
-                new OA\Property(property: "email", type: "string", example: "test@test.com"),
-                new OA\Property(property: "password", type: "string", example: "123456")
-            ]
-        )
-    ),
-    responses: [
-        new OA\Response(response: 200, description: "Login successful"),
-        new OA\Response(response: 401, description: "Unauthorized")
-    ]
-)]
+
     public function logout()
     {
         try {
@@ -125,24 +71,7 @@ class RegisterController extends Controller
         }
     }
 
-    #[OA\Post(
-    path: "/refresh",
-    summary: "User refresh token",
-    requestBody: new OA\RequestBody(
-        required: true,
-        content: new OA\JsonContent(
-            required: ["email","password"],
-            properties: [
-                new OA\Property(property: "email", type: "string", example: "test@test.com"),
-                new OA\Property(property: "password", type: "string", example: "123456")
-            ]
-        )
-    ),
-    responses: [
-        new OA\Response(response: 200, description: "Login successful"),
-        new OA\Response(response: 401, description: "Unauthorized")
-    ]
-)]
+
     public function refresh()
     {
         try {
@@ -159,7 +88,6 @@ class RegisterController extends Controller
     {
         $user = auth()->guard('api')->user();
         return $this->successResponse(new UserResource($user), 'User retrieved successfully', 200);
-
     }
     //
     // update profile
