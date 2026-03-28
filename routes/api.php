@@ -58,6 +58,7 @@ Route::prefix('v1')->group(function () {
 
             // CRUD hubs
             Route::post('/', [HubController::class, 'store']);
+            // Route::post('/', [HubController::class, 'store']);
             Route::get('/{slug}', [HubController::class, 'show']);
             Route::put('/{slug}', [HubController::class, 'update']);
             Route::delete('/{slug}', [HubController::class, 'destroy']);
