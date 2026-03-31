@@ -35,6 +35,8 @@ class RegisterController extends Controller
             'specialization' => $request->specialization,
         ]);
         $token = Auth::guard('api')->login($user);
+        $user->load('location');
+
         return $this->successResponse(['user' => new UserResource($user), 'token' => $token], 'User registered successfully', 201);
     }
 
@@ -49,6 +51,7 @@ class RegisterController extends Controller
         }
 
         $token = Auth::guard('api')->login($user);
+        $user->load('location');
         return $this->successResponse(
             [
                 'user ' =>  new UserResource($user),
@@ -87,6 +90,7 @@ class RegisterController extends Controller
     public function profile()
     {
         $user = auth()->guard('api')->user();
+        $user->load('location');
         return $this->successResponse(new UserResource($user), 'User retrieved successfully', 200);
     }
     //
@@ -101,7 +105,7 @@ class RegisterController extends Controller
         }
 
         $user->update($validatedData);
-
+        $user->load('location');
         return $this->successResponse(new UserResource($user), 'Profile updated successfully', 200);
     }
 }
