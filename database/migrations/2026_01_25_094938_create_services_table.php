@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hub_id')
-                ->constrained('hubs')
-                ->cascadeOnDelete();
+
             $table->json('name');
             $table->json('description')->nullable();
+            $table->boolean('is_active')->default(true);
+
             $table->timestamps();
         });
     }

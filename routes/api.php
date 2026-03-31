@@ -70,16 +70,7 @@ Route::prefix('v1')->group(function () {
             |--------------------------------------------------------------------------
             */
 
-            Route::prefix('{hub}/services')->group(function () {
 
-                Route::get('/', [ServiceController::class, 'index']);
-                Route::get('/{service}', [ServiceController::class, 'show']);
-
-                Route::post('/', [ServiceController::class, 'store']);
-                Route::put('/{service}', [ServiceController::class, 'update']);
-                Route::delete('/{service}', [ServiceController::class, 'destroy']);
-
-            });
 
 
             /*
@@ -96,13 +87,22 @@ Route::prefix('v1')->group(function () {
                 Route::post('/', [OfferController::class, 'store']);
                 Route::put('/{offer}', [OfferController::class, 'update']);
                 Route::delete('/{offer}', [OfferController::class, 'destroy']);
-
             });
-
         });
-
     });
 
+    Route::middleware(['auth:api'])->group(function () {
+        // جميع المستخدمين
+        Route::get('services', [ServiceController::class, 'index']);
+        Route::get('services/{id}', [ServiceController::class, 'show']);
+
+        // Admin فقط
+        Route::middleware( ['auth:api', 'admin'])->group(function () {
+            Route::post('services', [ServiceController::class, 'store']);
+            Route::put('services/{id}', [ServiceController::class, 'update']);
+            Route::delete('services/{id}', [ServiceController::class, 'destroy']);
+        });
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -115,7 +115,5 @@ Route::prefix('v1')->group(function () {
         Route::patch('/hubs/{hub}/status', [HubController::class, 'changeStatus']);
 
         Route::apiResource('location', LocationController::class)->except(['index', 'show']);
-
     });
-
 });

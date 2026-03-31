@@ -23,6 +23,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->json('description')->nullable();
             $table->json('address_details');
+            $table->string('contact');
             $table->string('status')->default('pending');
             $table->text('rejection_reason')->nullable();
 

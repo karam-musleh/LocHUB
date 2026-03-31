@@ -26,13 +26,25 @@ class HubResource extends JsonResource
                 ];
             }),
 
-            "images" => [
-                "main" => $this->main_image_url,
-                "gallery" => $this->when(
-                    $this->relationLoaded('galleryImages'),
-                    fn() => $this->gallery_images_urls
+            'images' => [
+                'main' => $this->main_image_url,
+                'gallery' => $this->when(
+                    $this->relationLoaded('images'),
+                    fn() => $this->gallery_images_urls // ✅ استخدم الـ attribute
                 ),
             ],
+            'services' => $this->when(
+                $this->relationLoaded('services'),
+                fn() => $this->services->map(function ($service) use ($lang) {
+                    return [
+                        'id' => $service->id,
+                        'name' => $service->getTranslation('name', $lang),
+                        'description' => $service->getTranslation('description', $lang),
+                    ];
+                })
+            ),
+            'contact' => $this->contact,
+
             'status' => $this->status,
             'rejection_reason' => $this->rejection_reason,
             'owner' => $this->whenLoaded('owner', function () {

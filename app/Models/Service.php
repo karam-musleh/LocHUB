@@ -2,31 +2,26 @@
 
 namespace App\Models;
 
-use App\Policies\ServicePolicy;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Translatable\HasTranslations;
 
 class Service extends Model
 {
-    use HasTranslations;
-
-    protected $fillable = [
-        'hup_id',
-        'name',
-        'description'
-    ];
     //
+    use HasTranslations;
+    protected $fillable = [
+        'name',
+        'description',
+        'is_active',
+    ];
     protected $casts = [
         'name' => 'array',
         'description' => 'array',
+        'is_active' => 'boolean',
     ];
-     public $translatable = [
-        'name',
-        'description'
-    ];
-    public function hub()
+    protected $translatable = ['name', 'description'];
+    public function hubs()
     {
-        return $this->belongsTo(Hub::class);
+        return $this->belongsToMany(Hub::class)->withTimestamps();
     }
 }

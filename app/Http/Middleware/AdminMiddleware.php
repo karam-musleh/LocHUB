@@ -20,7 +20,8 @@ class AdminMiddleware
             return $this->errorResponse('Unauthenticated', 401);
         }
 
-        if ($user->role !== UserRole::ADMIN->value) {
+        if ($user->role->value !== UserRole::ADMIN->value) {
+
             return $this->errorResponse('Unauthorized. Admins only.', 403);
         }
 

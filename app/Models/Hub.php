@@ -21,6 +21,7 @@ class Hub extends Model
         'location_id',
         'description',
         'address_details',
+        'contact',
         'status',
         'rejection_reason',
         // 'images',
@@ -34,8 +35,12 @@ class Hub extends Model
     ];
 
     protected $casts = [
-        'status' => HubStatus::class
+        'status' => HubStatus::class ,
+            'contact' => 'string',
+
     ];
+    protected $appends = ['url'];
+
     //
     public function owner()
     {
@@ -51,7 +56,7 @@ class Hub extends Model
     // خدمات الهب
     public function services()
     {
-        return $this->hasMany(Service::class);
+        return $this->belongsToMany(Service::class)->withTimestamps();
     }
 
     // عروض الهب
@@ -72,10 +77,10 @@ class Hub extends Model
         return $this->hasMany(Review::class);
     }
 
-public function hubSocialAccounts()
-{
-    return $this->morphMany(SocialAccount::class, 'accountable');
-}
+    public function hubSocialAccounts()
+    {
+        return $this->morphMany(SocialAccount::class, 'accountable');
+    }
     // صور الهب (Morph)
     public function images()
     {
@@ -123,5 +128,33 @@ public function hubSocialAccounts()
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+    // في app/Models/Hub.php
+    public function updateGallery($newFiles = [], $deleteIds = [])
+    {
+        // حذف
+        if (!empty($deleteIds)) {
+            $this->images()
+                ->whereIn('id', $deleteIds)
+                ->where('type', 'gallery')
+                ->each(function ($image) {
+                    if (Storage::disk($image->disk ?? 'custom')->exists($image->path)) {
+                        Storage::disk($image->disk ?? 'custom')->delete($image->path);
+                    }
+                    $image->delete();
+                });
+        }
+
+        // إضافة
+        if (!empty($newFiles)) {
+            foreach ($newFiles as $file) {
+                $path = $file->store('hubs/gallery', 'custom');
+                $this->images()->create([
+                    'path' => $path,
+                    'type' => 'gallery',
+                    'disk' => 'custom',
+                ]);
+            }
+        }
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\Hubs;
 
 use App\Models\Hub;
-use Illuminate\Support\Facades\Log;
 use App\Enum\HubStatus;
 use App\Helpers\ImageHelper;
 use Illuminate\Http\Request;
@@ -38,6 +37,11 @@ class HubController extends Controller
         $hubData['owner_id'] = $user->id;
         $hubData['status'] = HubStatus::PENDING->value;
         $hub = Hub::create($hubData);
+
+
+        if ($request->has('service_ids') && !empty($request->input('service_ids'))) {
+            $hub->services()->attach($request->input('service_ids'));
+        }
         // رفع الصورة الرئيسية
         if ($request->hasFile('main_image')) {
             ImageHelper::uploadImage($hub, $request->file('main_image'), 'hubs/main', 'main', 'custom');
@@ -68,7 +72,7 @@ class HubController extends Controller
 
     public function show($slug)
     {
-        $hub = Hub::with('location', 'owner', 'services', 'offers', 'bookings', 'reviews', 'images')
+        $hub = Hub::with('location', 'owner', 'offers', 'bookings', 'reviews', 'images')
             ->where('slug', $slug)
             ->first();
 
@@ -80,6 +84,7 @@ class HubController extends Controller
     }
     public function update(HubRequest $request, $slug)
     {
+        // dd($request->all());
         try {
             DB::beginTransaction();
 
@@ -93,6 +98,9 @@ class HubController extends Controller
             if ($hub->owner_id !== $user->id) {
                 return $this->errorResponse('You are not authorized to update this hub', 403);
             }
+            if ($request->has('service_ids')) {
+                $hub->services()->sync($request->input('service_ids'));
+            }
 
             $hub->update($request->validated());
 
@@ -100,26 +108,25 @@ class HubController extends Controller
             if ($request->hasFile('main_image')) {
                 ImageHelper::updateImage($hub, $request->file('main_image'), 'hubs/main', 'main', 'custom');
             }
-
             // تحديث معرض الصور
-            if ($request->has('delete_gallery_ids') || $request->hasFile('gallery_images')) {
-                ImageHelper::updateGallery(
-                    $hub,
-                    $request->file('gallery_images', []),
-                    $request->input('delete_gallery_ids', []),
-                    'hubs/gallery',
-                    'custom'
+            // تحديث معرض الصور
+            if ($request->has('delete_gallery_ids') || $request->hasFile('gallery')) {
+                $hub->updateGallery(
+                    $request->file('gallery', []),
+                    $request->input('delete_gallery_ids', [])
                 );
             }
-                // تحديث الحسابات الاجتماعية
-                if ($request->has('social_accounts')) {
-                    $hub->hubSocialAccounts()->delete();
-                    $hub->hubSocialAccounts()->createMany($request->input('social_accounts', []));
-                }
+            // dd($request->hasFile('gallery'));
+            // تحديث الحسابات الاجتماعية
+            if ($request->has('social_accounts')) {
+                $hub->hubSocialAccounts()->delete();
+                $hub->hubSocialAccounts()->createMany($request->input('social_accounts', []));
+            }
 
             DB::commit();
 
-            $hub->load('images', 'location', 'owner');
+            $hub->load('images', 'services', 'location', 'owner');
+            // dd($hub->load('images'));
 
             return $this->successResponse(new HubResource($hub), 'Hub updated successfully');
         } catch (\Exception $e) {
@@ -150,7 +157,7 @@ class HubController extends Controller
 
         // حذف كل الصور المرتبطة بالهب
         ImageHelper::deleteAll($hub);
-        
+
 
         // حذف الهب نفسه
         $hub->delete();

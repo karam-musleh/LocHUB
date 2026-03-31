@@ -2,12 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Hub;
 use App\Models\Service;
-use App\Policies\ServicePolicy;
 use App\Traits\ApiResponseTrait;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\ServiceRequest;
 use App\Http\Resources\ServiceResource;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -16,11 +13,12 @@ class ServiceController extends Controller
 {
     use ApiResponseTrait, AuthorizesRequests;
 
-    public function index(Hub $hub)
+    public function index()
     {
-        $per_page = request()->query('per_page', 10); // عدد العناصر في الصفحة، افتراضي 10
-        // للـ performance: استخدم pagination للـ hubs اللي فيها خدمات كثيرة
-        $services = $hub->services()
+        $lang = request()->query('lang', app()->getLocale());
+        $per_page = request()->query('per_page', 15);
+
+        $services = Service::where('is_active', true)
             ->latest()
             ->paginate($per_page);
 
@@ -30,10 +28,12 @@ class ServiceController extends Controller
         );
     }
 
-    public function store(Hub $hub, ServiceRequest $request)
+    public function store(ServiceRequest $request)
     {
-        $this->authorize('create', [Service::class, $hub]);
-        $service = $hub->services()->create($request->validated());
+        // dd($request->validated());
+
+        $service = Service::create($request->validated());
+
 
         return $this->successResponse(
             new ServiceResource($service),
@@ -43,10 +43,15 @@ class ServiceController extends Controller
     }
 
 
-    public function show(Hub $hub, Service $service)
+    public function show($id)
     {
-        // مع scoped bindings، Laravel بتتأكد تلقائياً
-        // إن الـ service تابع للـ hub (404 إذا مش تابع)
+        $lang = request()->query('lang', app()->getLocale());
+
+        $service = Service::findOrFail($id);
+
+        if (!$service->is_active) {
+            return $this->errorResponse('Service not found', 404);
+        }
 
         return $this->successResponse(
             new ServiceResource($service),
@@ -54,11 +59,11 @@ class ServiceController extends Controller
         );
     }
 
-    public function update(Hub $hub, Service $service, ServiceRequest $request)
+    // Admin فقط - تحديث الخدمة
+    public function update(ServiceRequest $request, $id)
     {
-        $service->loadMissing('hub');
-        $this->authorize('update', $service);
-        // dd($request->validated());
+
+        $service = Service::findOrFail($id);
         $service->update($request->validated());
 
         return $this->successResponse(
@@ -67,10 +72,11 @@ class ServiceController extends Controller
         );
     }
 
-    public function destroy(Hub $hub, Service $service)
+    // Admin فقط - حذف الخدمة
+    public function destroy($id)
     {
-        $this->authorize('delete', $service);
 
+        $service = Service::findOrFail($id);
         $service->delete();
 
         return $this->successResponse(
