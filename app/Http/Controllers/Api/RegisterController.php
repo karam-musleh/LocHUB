@@ -54,7 +54,7 @@ class RegisterController extends Controller
         $user->load('location');
         return $this->successResponse(
             [
-                'user ' =>  new UserResource($user),
+                'user' =>  new UserResource($user),
                 'token' => $token
             ],
             'User logged in successfully',
