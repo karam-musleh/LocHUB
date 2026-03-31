@@ -27,6 +27,7 @@ class UserResource extends JsonResource
                     'id' => $this->location->id,
                     'name' => $this->location->getTranslation('name', $lang),
                     'type' => $this->location->type,
+                    
                 ];
             }),
             'specialization' => $this->specialization,
