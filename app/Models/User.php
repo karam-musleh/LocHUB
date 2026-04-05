@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements JWTSubject
 {
     // use HasTranslations ;
+    use Notifiable ;
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -62,6 +63,7 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\DashBoard\AdminNotificationController;
 use App\Http\Controllers\Api\DashBoard\LocationController;
 use App\Http\Controllers\Api\DashBoard\OfferController;
 use App\Http\Controllers\Api\Hubs\HubController;
@@ -97,7 +98,7 @@ Route::prefix('v1')->group(function () {
         Route::get('services/{id}', [ServiceController::class, 'show']);
 
         // Admin فقط
-        Route::middleware( ['auth:api', 'admin'])->group(function () {
+        Route::middleware(['auth:api', 'admin'])->group(function () {
             Route::post('services', [ServiceController::class, 'store']);
             Route::put('services/{id}', [ServiceController::class, 'update']);
             Route::delete('services/{id}', [ServiceController::class, 'destroy']);
@@ -116,4 +117,27 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('location', LocationController::class)->except(['index', 'show']);
     });
+
+    Route::middleware('auth:api')->group(function () {
+        // Hub Owner
+
+        // ============ Admin Routes ============
+        Route::middleware('admin')->group(function () {
+            // جميع الإشعارات مع unread_count
+            Route::get('/admin/notifications', [AdminNotificationController::class, 'index']);
+
+            // عدد الإشعارات غير المقروءة فقط
+            Route::get('/admin/notifications/unread-count', [AdminNotificationController::class, 'unreadCount']);
+
+            // وضع علامة مقروء على إشعار واحد
+            Route::post('/admin/notifications/{id}/read', [AdminNotificationController::class, 'markAsRead']);
+
+            // وضع علامة مقروء على الكل
+            Route::post('/admin/notifications/mark-all-read', [AdminNotificationController::class, 'markAllAsRead']);
+
+            // حذف إشعار
+            Route::delete('/admin/notifications/{id}', [AdminNotificationController::class, 'delete']);
+        });
+    });
 });
+// routes/api.php

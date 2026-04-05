@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api\Hubs;
 
-use App\Models\Hub;
 use App\Enum\HubStatus;
+use App\Events\HubCreated;
 use App\Helpers\ImageHelper;
-use Illuminate\Http\Request;
-use App\Traits\ApiResponseTrait;
-use App\Http\Requests\HubRequest;
-use Illuminate\Support\Facades\DB;
-use App\Http\Resources\HubResource;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\HubRequest;
+use App\Http\Resources\HubResource;
+use App\Models\Hub;
+use App\Traits\ApiResponseTrait;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HubController extends Controller
 {
@@ -67,6 +68,8 @@ class HubController extends Controller
             $hub->hubSocialAccounts()->createMany($hubData['social_accounts']);
         }
         $hub->load('images', 'services', 'offers', 'bookings', 'reviews', 'location', 'owner', 'galleryImages', 'hubSocialAccounts');
+        event(new HubCreated($hub));
+
         return $this->successResponse(new HubResource($hub), 'Hub created successfully', 201);
     }
 
