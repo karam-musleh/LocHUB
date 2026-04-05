@@ -6,7 +6,7 @@ use App\Models\Hub;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Notifications\Messages\MailMessage;
+// use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 // use Illuminate\Notifications\Messages\BroadcastMessage;
 class HubCreatedNotification extends Notification implements ShouldQueue

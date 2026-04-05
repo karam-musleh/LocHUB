@@ -15,7 +15,7 @@ class ServiceController extends Controller
 
     public function index()
     {
-        $lang = request()->query('lang', app()->getLocale());
+        // $lang = request()->query('lang', app()->getLocale());
         $per_page = request()->query('per_page', 15);
 
         $services = Service::where('is_active', true)

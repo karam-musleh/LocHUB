@@ -140,4 +140,9 @@ Route::prefix('v1')->group(function () {
         });
     });
 });
-// routes/api.php
+// routes/api.php for front hubs
+Route::prefix('v1')->group(function () {
+    Route::get('/hubs', [\App\Http\Controllers\Api\Front\HubsController::class, 'index']);
+    Route::get('/hubs/{slug}', [\App\Http\Controllers\Api\Front\HubsController::class, 'show']);
+});
+
