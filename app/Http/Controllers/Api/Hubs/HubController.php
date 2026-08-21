@@ -240,4 +240,56 @@ class HubController extends Controller
             \Log::error(__('messages.failed_to_send_hub_status_email') . ' ' . $e->getMessage());
         }
     }
+
+    public function updateFeatured(Request $request, Hub $hub)
+{
+    $validated = $request->validate([
+        'is_featured' => ['required', 'boolean'],
+
+        'featured_from' => [
+            'nullable',
+            'date',
+        ],
+
+        'featured_until' => [
+            'nullable',
+            'date',
+            'after_or_equal:featured_from',
+        ],
+
+        'featured_priority' => [
+            'nullable',
+            'integer',
+            'min:0',
+        ],
+    ]);
+
+    // ما نسمح بتمييز Hub غير معتمد
+    if ($validated['is_featured'] && !$hub->isApproved()) {
+        return $this->errorResponse(
+            __('messages.only_approved_hubs_can_be_featured'),
+            422
+        );
+    }
+
+    $hub->update([
+        'is_featured' => $validated['is_featured'],
+
+        'featured_from' => $validated['is_featured']
+            ? ($validated['featured_from'] ?? now())
+            : null,
+
+        'featured_until' => $validated['is_featured']
+            ? ($validated['featured_until'] ?? null)
+            : null,
+
+        'featured_priority' => $validated['is_featured']
+            ? ($validated['featured_priority'] ?? 0)
+            : 0,
+    ]);
+
+    return $this->successResponse([
+        'hub' => new HubResource($hub->fresh()),
+    ], __('messages.hub_featured_status_updated'));
+}
 }

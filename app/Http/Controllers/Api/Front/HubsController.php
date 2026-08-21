@@ -31,6 +31,8 @@ class HubsController extends Controller
                 'services:id,name',
             ])
             ->visibleFor($user, $locationId);
+        $query->orderByFeatured();
+
 
         /**
          * SEARCH

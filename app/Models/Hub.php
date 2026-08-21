@@ -30,6 +30,10 @@ class Hub extends Model
         'hourly_price',
         'rejection_reason',
         // 'images',
+        'is_featured',
+        'featured_priority',
+        'featured_from',
+        'featured_until',
 
     ];
 
@@ -44,6 +48,10 @@ class Hub extends Model
         'contact' => 'string',
         'working_hours_start' => 'datetime:H:i',
         'working_hours_end' => 'datetime:H:i',
+        'is_featured' => 'boolean',
+        'featured_priority' => 'integer',
+        'featured_from' => 'datetime',
+        'featured_until' => 'datetime',
 
     ];
     // protected $appends = ['url'];
@@ -118,6 +126,44 @@ class Hub extends Model
             ->where('is_global', true);
     }
 
+
+    public function isCurrentlyFeatured(): bool
+{
+    if (!$this->is_featured) {
+        return false;
+    }
+
+    if (!$this->isApproved()) {
+        return false;
+    }
+
+    $now = now();
+
+    if ($this->featured_from && $now->lt($this->featured_from)) {
+        return false;
+    }
+
+    if ($this->featured_until && $now->gt($this->featured_until)) {
+        return false;
+    }
+
+    return true;
+}
+// Scope for fetching featured hubs
+public function scopeOrderByFeatured($query)
+{
+    return $query
+        ->orderByRaw("
+            CASE
+                WHEN is_featured = 1
+                AND (featured_from IS NULL OR featured_from <= NOW())
+                AND (featured_until IS NULL OR featured_until >= NOW())
+                THEN 0
+                ELSE 1
+            END
+        ")
+        ->orderByDesc('featured_priority');
+}
     // الخدمات الخاصة بهذا الـ Hub
     public function customServices()
     {
@@ -278,9 +324,9 @@ class Hub extends Model
         return $user && $this->isFavoritedBy($user);
     }
 
-// isApproved
-public function isApproved(){
-    return $this->status === HubStatus::APPROVED;
-
-}
+    // isApproved
+    public function isApproved()
+    {
+        return $this->status === HubStatus::APPROVED;
+    }
 }

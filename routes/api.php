@@ -135,7 +135,7 @@ Route::prefix('v1')->middleware(['set_language'])->group(function () {
     Route::middleware(['auth:api', 'admin'])->group(function () {
 
         Route::patch('/hubs/{hub}/status', [HubController::class, 'changeStatus']);
-
+        Route::patch('/hubs/{hub}/featured', [HubController::class, 'updateFeatured']);
 
 
         // Route::apiResource('location', LocationController::class)->except(['index', 'show']);
