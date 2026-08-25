@@ -112,6 +112,11 @@ class HubResource extends JsonResource
                 'average_rating' => $this->averageRating(),
             ],
             'status' => $this->status,
+            'is_featured' => $this->is_featured,
+            'featured_priority' => $this->featured_priority,
+            'featured_from' => $this->featured_from,
+            'featured_until' => $this->featured_until,
+
             'rejection_reason' => $this->rejection_reason,
 
             'owner' => $this->whenLoaded('owner', function () {
